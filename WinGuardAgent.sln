@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinGuardAgent", "WinGuardAgent\WinGuardAgent.csproj", "{B523B0A6-835A-4C97-BD9D-353D5149C4B4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinGuardAdmin", "WinGuardAdmin\WinGuardAdmin.csproj", "{D824F21B-88E5-4D12-90BE-A9C99B5826DF}"
+EndProject
+Global
+    GlobalSection(SolutionConfigurationPlatforms) = preSolution
+        Debug|Any CPU = Debug|Any CPU
+        Release|Any CPU = Release|Any CPU
+    EndGlobalSection
+    GlobalSection(ProjectConfigurationPlatforms) = postSolution
+        {B523B0A6-835A-4C97-BD9D-353D5149C4B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {B523B0A6-835A-4C97-BD9D-353D5149C4B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {B523B0A6-835A-4C97-BD9D-353D5149C4B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {B523B0A6-835A-4C97-BD9D-353D5149C4B4}.Release|Any CPU.Build.0 = Release|Any CPU
+        {D824F21B-88E5-4D12-90BE-A9C99B5826DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {D824F21B-88E5-4D12-90BE-A9C99B5826DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {D824F21B-88E5-4D12-90BE-A9C99B5826DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {D824F21B-88E5-4D12-90BE-A9C99B5826DF}.Release|Any CPU.Build.0 = Release|Any CPU
+    EndGlobalSection
+EndGlobal

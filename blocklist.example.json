@@ -1,0 +1,9 @@
+{
+  "source": "example-parent-list",
+  "version": "2026.09.11",
+  "generatedUtc": "2026-09-11T00:00:00Z",
+  "entries": [
+    { "domain": "example.invalid", "allowed": false, "category": "Custom" },
+    { "domain": "school.example.invalid", "allowed": true, "category": "Custom" }
+  ]
+}

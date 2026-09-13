@@ -1,0 +1,30 @@
+{
+  "dnsProtectionEnabled": false,
+  "chromePoliciesEnabled": true,
+  "lockSystemProxy": true,
+  "upstreamDns": [
+    "1.1.1.1",
+    "1.0.0.1"
+  ],
+  "processScanMilliseconds": 2000,
+  "installedAppScanMinutes": 15,
+  "forceGoogleSafeSearch": true,
+  "blockUnauthorizedExtensions": false,
+  "restrictChromeWebStore": false,
+  "friendlyBlockPageEnabled": true,
+  "friendlyBlockPageMessage": "Go back to work \ud83d\ude3c",
+  "blockedCategories": [
+    "WebProxiesAnonymizers",
+    "VpnTunneling",
+    "AdultContent",
+    "Gambling",
+    "MalwarePhishing",
+    "CloudGaming",
+    "SocialMedia",
+    "Custom"
+  ],
+  "tamperProtectionEnabled": true,
+  "tamperCheckSeconds": 60,
+  "manageEdgePolicies": true,
+  "disableBrowserDnsOverHttps": true
+}
