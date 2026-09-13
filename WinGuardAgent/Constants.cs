@@ -1,0 +1,3 @@
+namespace WinGuardAgent;
+public static class Constants { public const string ServiceName="WinGuardAgent"; public const string DisplayName="WinGuard Agent"; public const string Description="Administrator-controlled parental-control policy agent."; }
+public static class Paths { public static readonly string ProgramData=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),"WinGuardAgent"); public static readonly string Database=Path.Combine(ProgramData,"winguard.db"); public static readonly string LogDirectory=Path.Combine(ProgramData,"logs"); public static readonly string FatalLog=Path.Combine(LogDirectory,"fatal.log"); public static readonly string ConfigFile=Path.Combine(ProgramData,"agent.json"); }
