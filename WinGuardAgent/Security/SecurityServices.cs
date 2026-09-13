@@ -1,0 +1,5 @@
+using System.Security.AccessControl;
+using System.Security.Principal;
+namespace WinGuardAgent.Security;
+public sealed class SecurityHardening { public Task ApplyAsync(CancellationToken ct=default){Directory.CreateDirectory(Paths.ProgramData);try{var di=new DirectoryInfo(Paths.ProgramData);var acl=new DirectorySecurity();acl.SetAccessRuleProtection(true,false);acl.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.LocalSystemSid,null),FileSystemRights.FullControl,InheritanceFlags.ContainerInherit|InheritanceFlags.ObjectInherit,PropagationFlags.None,AccessControlType.Allow));acl.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid,null),FileSystemRights.FullControl,InheritanceFlags.ContainerInherit|InheritanceFlags.ObjectInherit,PropagationFlags.None,AccessControlType.Allow));di.SetAccessControl(acl);}catch{}return Task.CompletedTask;} }
+public sealed class TamperProtectionService { public Task CheckAsync(CancellationToken ct=default)=>Task.CompletedTask; }

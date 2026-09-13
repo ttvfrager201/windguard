@@ -1,0 +1,4 @@
+using Microsoft.Win32;
+using WinGuardAgent.Storage;
+namespace WinGuardAgent.Chrome;
+public sealed class ChromePolicyManager(SettingsRepository settings){ public async Task ApplyAsync(CancellationToken ct=default){var cfg=await settings.GetAsync(ct);if(!cfg.ChromePoliciesEnabled)return;using var chrome=Registry.LocalMachine.CreateSubKey(@"SOFTWARE\Policies\Google\Chrome",true);if(cfg.ForceGoogleSafeSearch)chrome?.SetValue("ForceGoogleSafeSearch",1,RegistryValueKind.DWord);if(cfg.DisableBrowserDnsOverHttps)chrome?.SetValue("DnsOverHttpsMode","off",RegistryValueKind.String);if(cfg.ManageEdgePolicies){using var edge=Registry.LocalMachine.CreateSubKey(@"SOFTWARE\Policies\Microsoft\Edge",true);if(cfg.ForceGoogleSafeSearch)edge?.SetValue("ForceGoogleSafeSearch",1,RegistryValueKind.DWord);if(cfg.DisableBrowserDnsOverHttps)edge?.SetValue("DnsOverHttpsMode","off",RegistryValueKind.String);}} }

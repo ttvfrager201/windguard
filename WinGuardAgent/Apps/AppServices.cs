@@ -1,0 +1,5 @@
+using System.Diagnostics;
+using WinGuardAgent.Storage;
+namespace WinGuardAgent.Apps;
+public sealed class ProcessBlocker(PolicyRepository policies,EventRepository events){ public async Task EnforceAsync(CancellationToken ct=default){var blocked=await policies.GetBlockedAppsAsync(ct);if(blocked.Count==0)return;foreach(var p in Process.GetProcesses()){try{var exe=p.ProcessName+".exe";if(blocked.Contains(exe)){var user=Environment.UserName;p.Kill(true);await events.WriteAsync("blocked_application",user,exe,"Administrator policy",ct:ct);}}catch{}}} }
+public sealed class InstalledAppDetector { private DateTimeOffset _last=DateTimeOffset.MinValue; public Task ScanAsync(CancellationToken ct=default){if(DateTimeOffset.UtcNow-_last<TimeSpan.FromMinutes(15))return Task.CompletedTask;_last=DateTimeOffset.UtcNow;return Task.CompletedTask;} }
