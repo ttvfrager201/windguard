@@ -6,9 +6,12 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   build:
-    name: Build WinGuard Installer
+    name: Build WinGuard Agent
     runs-on: windows-latest
 
     steps:
@@ -24,68 +27,36 @@ jobs:
         run: dotnet restore WinGuardAgent.sln
 
       - name: Publish WinGuard Agent
-        run: >
-          dotnet publish WinGuardAgent/WinGuardAgent.csproj
+        shell: pwsh
+        run: >-
+          dotnet publish .\WinGuardAgent\WinGuardAgent.csproj
           -c Release
           -r win-x64
           --self-contained true
           -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
           -p:PublishReadyToRun=true
-          -o "${{ github.workspace }}\publish\Agent"
+          -o .\publish\Agent
 
-      - name: Publish WinGuard Admin
-        run: >
-          dotnet publish WinGuardAdmin/WinGuardAdmin.csproj
-          -c Release
-          -r win-x64
-          --self-contained true
-          -p:PublishSingleFile=true
-          -p:PublishReadyToRun=true
-          -o "${{ github.workspace }}\publish\Admin"
-
-      - name: Install WiX
+      - name: Create package
         shell: pwsh
         run: |
-          dotnet tool install --global wix --version 5.*
-          wix --version
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Path .\package -Force | Out-Null
+          Copy-Item .\publish\Agent\WinGuardAgent.exe .\package\WinGuardAgent.exe -Force
+          Copy-Item .\README.md .\package\README.md -Force
+          @'
+          WinGuard Agent - Windows x64
 
-      - name: Build WinGuard MSI Installer
-        shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Force -Path "${{ github.workspace }}\installer-output"
+          This build currently contains the WinGuard background service/CLI.
+          The separate WinGuardAdmin project is not yet present in this repository,
+          so the workflow intentionally does not try to build it.
+          '@ | Set-Content .\package\INSTALL.txt -Encoding UTF8
 
-          wix build `
-            "${{ github.workspace }}\Installer\Product.wxs" `
-            -arch x64 `
-            -d AgentPublishDir="${{ github.workspace }}\publish\Agent" `
-            -d AdminPublishDir="${{ github.workspace }}\publish\Admin" `
-            -o "${{ github.workspace }}\installer-output\WinGuardAgentSetup.msi"
-
-      - name: Create WinGuard Package
-        shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Force -Path "${{ github.workspace }}\package"
-
-          Copy-Item `
-            "${{ github.workspace }}\installer-output\WinGuardAgentSetup.msi" `
-            "${{ github.workspace }}\package\WinGuardAgentSetup.msi"
-
-          Copy-Item `
-            "${{ github.workspace }}\publish\Agent\WinGuardAgent.exe" `
-            "${{ github.workspace }}\package\WinGuardAgent.exe"
-
-          Copy-Item `
-            "${{ github.workspace }}\publish\Admin\WinGuardAdmin.exe" `
-            "${{ github.workspace }}\package\WinGuardAdmin.exe"
-
-          Copy-Item `
-            "${{ github.workspace }}\README.md" `
-            "${{ github.workspace }}\package\README.md"
-
-      - name: Upload WinGuard Installer
+      - name: Upload WinGuard Agent
         uses: actions/upload-artifact@v4
         with:
-          name: WinGuard-Installer
+          name: WinGuard-Agent
           path: package/
           if-no-files-found: error
           retention-days: 30
