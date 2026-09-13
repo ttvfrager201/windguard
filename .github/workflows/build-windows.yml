@@ -1,0 +1,91 @@
+name: Build WinGuard for Windows
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build WinGuard Installer
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout WinGuard
+        uses: actions/checkout@v4
+
+      - name: Install .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: dotnet restore WinGuardAgent.sln
+
+      - name: Publish WinGuard Agent
+        run: >
+          dotnet publish WinGuardAgent/WinGuardAgent.csproj
+          -c Release
+          -r win-x64
+          --self-contained true
+          -p:PublishSingleFile=true
+          -p:PublishReadyToRun=true
+          -o "${{ github.workspace }}\publish\Agent"
+
+      - name: Publish WinGuard Admin
+        run: >
+          dotnet publish WinGuardAdmin/WinGuardAdmin.csproj
+          -c Release
+          -r win-x64
+          --self-contained true
+          -p:PublishSingleFile=true
+          -p:PublishReadyToRun=true
+          -o "${{ github.workspace }}\publish\Admin"
+
+      - name: Install WiX
+        shell: pwsh
+        run: |
+          dotnet tool install --global wix --version 5.*
+          wix --version
+
+      - name: Build WinGuard MSI Installer
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path "${{ github.workspace }}\installer-output"
+
+          wix build `
+            "${{ github.workspace }}\Installer\Product.wxs" `
+            -arch x64 `
+            -d AgentPublishDir="${{ github.workspace }}\publish\Agent" `
+            -d AdminPublishDir="${{ github.workspace }}\publish\Admin" `
+            -o "${{ github.workspace }}\installer-output\WinGuardAgentSetup.msi"
+
+      - name: Create WinGuard Package
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path "${{ github.workspace }}\package"
+
+          Copy-Item `
+            "${{ github.workspace }}\installer-output\WinGuardAgentSetup.msi" `
+            "${{ github.workspace }}\package\WinGuardAgentSetup.msi"
+
+          Copy-Item `
+            "${{ github.workspace }}\publish\Agent\WinGuardAgent.exe" `
+            "${{ github.workspace }}\package\WinGuardAgent.exe"
+
+          Copy-Item `
+            "${{ github.workspace }}\publish\Admin\WinGuardAdmin.exe" `
+            "${{ github.workspace }}\package\WinGuardAdmin.exe"
+
+          Copy-Item `
+            "${{ github.workspace }}\README.md" `
+            "${{ github.workspace }}\package\README.md"
+
+      - name: Upload WinGuard Installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: WinGuard-Installer
+          path: package/
+          if-no-files-found: error
+          retention-days: 30
